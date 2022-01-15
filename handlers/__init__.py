@@ -1,3 +1,4 @@
-from . import start
 from . import help
-from . import formatting
+from . import start
+from . import view
+from . import edit
