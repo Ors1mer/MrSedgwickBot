@@ -6,6 +6,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from datetime import date, timedelta
 from scheduler import WeekSchedule
+from .shared_functions import is_integer
 
 
 class Form(StatesGroup):
@@ -21,24 +22,20 @@ async def viewer(user_message: types.Message):
 
 
 @dp.message_handler(state=Form.week_number)
-async def process_user_answer(user_answer: types.Message, state: FSMContext):
+async def process_user_answer(user_input: types.Message, state: FSMContext):
     """
     Await for a message with an integer, then output the week
     This handler will continue to work until the user doesn't send something
     different from integer
     """
 
-    week_number = user_answer.text
-    await state.update_data(week_number=week_number)
+    week_number = user_input.text
 
-    # Validation, that the week_number is an integer, otherwise exit
-    if (
-        week_number.isdigit()
-        or week_number.startswith("-")
-        and week_number[1:].isdigit()
-    ):
+    if is_integer(week_number):
         week_number = int(week_number)
         week = WeekSchedule(date.today() + timedelta(days=7 * (week_number - 1)))
-        await user_answer.answer(week.view())
+        await user_input.answer(week.view())
     else:
+        # the handler stops working
+        await user_input.answer("Ты увидел(а) достаточно, принял.")
         await state.finish()
