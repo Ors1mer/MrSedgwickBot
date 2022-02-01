@@ -8,6 +8,8 @@ from datetime import date, timedelta
 from scheduler import WeekSchedule
 from .shared_functions import is_integer
 
+import pickle
+
 
 class FormView(StatesGroup):
     week_number = State()
@@ -34,6 +36,19 @@ async def process_user_answer(user_input: types.Message, state: FSMContext):
     if is_integer(week_number):
         week_number = int(week_number)
         week = WeekSchedule(date.today() + timedelta(days=7 * (week_number - 1)))
+
+        # If exists, load the week from db
+        user_id = user_input.from_user.id
+        schedules = dict()
+        try:
+            with  open(f"db/{user_id}", "rb") as db:
+                schedules = pickle.load(db)
+                if week.first_wd in schedules.keys():
+                    week = schedules[week.first_wd]
+        except: # Excepts EOF and FileNotFound errors
+            # Create database file
+            open(f"db/{user_id}", 'w')
+
         await user_input.answer(week.view())
     else:
         # the handler stops working
