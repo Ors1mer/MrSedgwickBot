@@ -18,24 +18,24 @@ class FormView(StatesGroup):
 @dp.message_handler(commands="view")
 async def viewer(user_message: types.Message):
     # Ask user so he/she understands that the bot expects a number
-    await user_message.answer("Какую неделю хочешь посмотреть?")
+    await user_message.answer("Which week to edit?")
     # Change state so that process_user_answer could launch
     await FormView.week_number.set()
 
 
+"""
+Await for a message with an integer, then output the week
+This handler will continue working until the user doesn't send something
+different from integer
+"""
 @dp.message_handler(state=FormView.week_number)
 async def process_user_answer(user_input: types.Message, state: FSMContext):
-    """
-    Await for a message with an integer, then output the week
-    This handler will continue to work until the user doesn't send something
-    different from integer
-    """
-
     week_number = user_input.text
 
     if is_integer(week_number):
         week_number = int(week_number)
-        week = WeekSchedule(date.today() + timedelta(days=7 * (week_number - 1)))
+        week = WeekSchedule(date.today() +
+                            timedelta(days=7 * (week_number - 1)))
 
         # If exists, load the week from db
         user_id = user_input.from_user.id
@@ -45,12 +45,11 @@ async def process_user_answer(user_input: types.Message, state: FSMContext):
                 schedules = pickle.load(db)
                 if week.first_wd in schedules.keys():
                     week = schedules[week.first_wd]
-        except:  # Excepts EOF and FileNotFound errors
+        except:  # excepts EOF and FileNotFound errors
             # Create database file
             open(f"db/{user_id}", "w")
 
         await user_input.answer(week.view())
-    else:
-        # the handler stops working
-        await user_input.answer("Ты увидел(а) достаточно, принял.")
+    else: # the handler stops working
+        await user_input.answer("You've seen enough, got it.")
         await state.finish()

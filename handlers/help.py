@@ -3,18 +3,19 @@ from aiogram.dispatcher.filters.builtin import CommandHelp
 
 from loader import dp
 
+guide = """\
+/start – basically no need to explain :)
+/help – I guess here's the same
+/view – check out the schedule for a week. After choosing this option, you \
+have to type in a number, i. e. the number of the week. You count it like \
+that: the current week - 1, the next one – 2, etc (use negatives for the \
+previous weeks). You may input any amount of numbers and I'll show the \
+schedule for each one. When you're done - write something different.
+/edit – First of all, choose a week. Then fill up the schedule by picking an \
+activity from the list. After that, you can edit another week in the same \
+way, or end the process by writing something like \"stop\".
+"""
 
 @dp.message_handler(CommandHelp())
 async def send_help(user_message: types.Message):
-    guide = """/start – объяснять не требуется :)
-/help – а тут? :)
-/view – посмотреть график на какую-то неделю. После выбора этой команды, тебе \
-нужно ввести число, это будет номер недели. Считай так: текущая неделя - 1, \
-следующая – 2, и так далее (также можно просмотреть прошедшие недели). Можешь \
-писать числа, сколько тебе захочется, я покажу график каждой. А когда надоест \
-– напиши что-то другое.
-/edit – Сначала выбери неделю. Дальше, нажимая на кнопки, заполни график \
-выбранной недели. После этого ты можешь либо редактировать ещё одну неделю, \
-написав число, либо закончить работу команды, написав фразу на подобие \"стоп\".
-"""
     await user_message.answer(guide)

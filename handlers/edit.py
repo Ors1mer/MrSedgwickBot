@@ -20,14 +20,21 @@ def get_keyboard():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Очное 🎓", callback_data="очное"),
                 InlineKeyboardButton(
-                    text="Дистанционное 📚", callback_data="дистанционное"
+                    text="Face-to-face 🎓", callback_data="face"
+                ),
+                InlineKeyboardButton(
+                    text="Online 📚", callback_data="online"
                 ),
             ],
             [
-                InlineKeyboardButton(text="Выходной 🤟", callback_data="выходной"),
-                InlineKeyboardButton(text="Работа 🔥", callback_data="работа"),
+                InlineKeyboardButton(
+                    text="Day off 🤟",
+                    callback_data="dayoff"
+                ),
+                InlineKeyboardButton(
+                    text="Work 🔥", callback_data="work"
+                ),
             ],
         ]
     )
@@ -36,23 +43,22 @@ def get_keyboard():
 @dp.message_handler(commands="edit")
 async def editor(user_message: Message, state: FSMContext):
     # Ask user so he/she understands that the bot expects a number
-    await user_message.answer("Какую неделю хочешь расписать?")
+    await user_message.answer("Which week to edit?")
 
     await FormEdit.week_number.set()
 
 
 @dp.message_handler(state=FormEdit.week_number)
 async def process_user_answer(user_input: Message, state: FSMContext):
-
     week_number = user_input.text
 
     if is_integer(week_number):
         # --- Create week's schedule ---
         # Creating pure instance
         week_number = int(week_number)
-        week = WeekSchedule(date.today() + timedelta(days=7 * (week_number - 1)))
-
-        # If exists, load the week from db
+        week = WeekSchedule(date.today() +
+                            timedelta(days=7 * (week_number - 1)))
+        # If exists, load the week from the db
         user_id = user_input.from_user.id
         schedules = dict()
         try:
@@ -61,42 +67,36 @@ async def process_user_answer(user_input: Message, state: FSMContext):
                 if week.first_wd in schedules.keys():
                     week = schedules[week.first_wd]
         except:
-            # Create database file
-            open(f"db/{user_id}", "w")
-
+            open(f"db/{user_id}", "w") # create new database record
         # --- Skip past days ---
-        # Foolproof: the user shouldn't be able to edit past weeks
+        # A foolproof: the user shouldn't be able to edit past weeks
         if week_number < 1:
-            await user_input.answer("Прошлого не изменить!")
+            await user_input.answer("You can't change the past!")
             return
-
         # Define from which day the editing should start
         # So that the user can't edit past days in the current week
         day = 0
         while week.first_wd + timedelta(days=day) < date.today():
             day += 1
-
         async with state.proxy() as data:
             data["week"] = week
             data["day"] = day
             data["user_id"] = user_id
             data["schedules"] = schedules
-
         # --- Send message ---
         # On this stage the callback can be called needed amount of times
         await user_input.answer(week.view(), reply_markup=get_keyboard())
 
-    else:
-        # The handler stops working
-        await user_input.answer("График создан! (Или нет?)")
+    else: # the handler stops working
+        await user_input.answer("The schedule is created! (isn't it?)")
         await state.finish()
 
 
 @dp.callback_query_handler(
-    text=["очное", "дистанционное", "выходной", "работа"], state=FormEdit.week_number
+    text=["face", "online", "dayoff", "work"], state=FormEdit.week_number
 )
 async def activity_choice(call: CallbackQuery, state: FSMContext):
-    indices = {"очное": 0, "дистанционное": 1, "заочное": 1, "выходной": 2, "работа": 3}
+    indices = {"face": 0, "online": 1, "dayoff": 2, "work": 3}
 
     # Getting needed variables
     async with state.proxy() as data:
@@ -111,8 +111,9 @@ async def activity_choice(call: CallbackQuery, state: FSMContext):
     # Edit the message with the schedule
     if day < 6:
         try:
-            await call.message.edit_text(week.view(), reply_markup=get_keyboard())
-        except:  # Intended to handle MessageNotModified exception
+            await call.message.edit_text(week.view(),
+                                         reply_markup=get_keyboard())
+        except:  # intended to handle MessageNotModified exception
             pass
     else:
         try:
@@ -123,7 +124,6 @@ async def activity_choice(call: CallbackQuery, state: FSMContext):
         with open(f"db/{user_id}", "wb") as db:
             schedules[week.first_wd] = week
             pickle.dump(schedules, db)
-
     # Save variables
     async with state.proxy() as data:
         data["week"] = week
