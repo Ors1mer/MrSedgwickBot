@@ -1,0 +1,8 @@
+# Git
+.git
+.gitignore
+
+# The database
+db/*
+
+README.md
