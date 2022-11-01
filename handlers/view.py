@@ -18,7 +18,7 @@ class FormView(StatesGroup):
 @dp.message_handler(commands="view")
 async def viewer(user_message: types.Message):
     # Ask user so he/she understands that the bot expects a number
-    await user_message.answer("Which week to edit?")
+    await user_message.answer("Which week do you want to check out?")
     # Change state so that process_user_answer could launch
     await FormView.week_number.set()
 
