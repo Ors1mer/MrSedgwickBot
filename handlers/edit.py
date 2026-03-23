@@ -21,7 +21,7 @@ def get_keyboard():
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="Face-to-face 🎓", callback_data="face"
+                    text="Face-to-face 🎓", callback_data="face-to-face"
                 ),
                 InlineKeyboardButton(
                     text="Online 📚", callback_data="online"
@@ -30,7 +30,7 @@ def get_keyboard():
             [
                 InlineKeyboardButton(
                     text="Day off 🤟",
-                    callback_data="dayoff"
+                    callback_data="day off"
                 ),
                 InlineKeyboardButton(
                     text="Work 🔥", callback_data="work"
@@ -42,7 +42,7 @@ def get_keyboard():
 
 @dp.message_handler(commands="edit")
 async def editor(user_message: Message, state: FSMContext):
-    # Ask user so he/she understands that the bot expects a number
+    # Ask user so the user understands that the bot expects a number
     await user_message.answer("Which week to edit?")
 
     await FormEdit.week_number.set()
@@ -93,10 +93,11 @@ async def process_user_answer(user_input: Message, state: FSMContext):
 
 
 @dp.callback_query_handler(
-    text=["face", "online", "dayoff", "work"], state=FormEdit.week_number
+    text=["face-to-face", "online", "day off", "work"],
+    state=FormEdit.week_number
 )
 async def activity_choice(call: CallbackQuery, state: FSMContext):
-    indices = {"face": 0, "online": 1, "dayoff": 2, "work": 3}
+    indices = {"face-to-face": 0, "online": 1, "day off": 2, "work": 3}
 
     # Getting needed variables
     async with state.proxy() as data:
