@@ -1,12 +1,12 @@
 from aiogram import types
-from bot import dp
+from aiogram.dispatcher.filters.builtin import CommandHelp
+
+from loader import dp
 
 
-@dp.message_handler(commands=["help", "HELP", "h"])
-async def send_help(message: types.Message):
-    guide = """Чтобы <i>расписать</i> свой график, выбери неделю <del>(начиная с \
-текущей)</del>, потом выбери, чем будешь заниматься в каждый из семи дней.
-
-Ты можешь заполнить <span class="tg-spoiler">сколько угодно</span> недель и \
-редактировать каждую из них."""
-    await message.reply(guide)
+@dp.message_handler(CommandHelp())
+async def send_help(user_message: types.Message):
+    guide = """Чтобы расписать свой график, выбери неделю (начиная с \
+текущей), потом выбери, чем будешь заниматься в каждый из семи дней.
+Ты можешь заполнить сколько угодно недель и редактировать каждую из них."""
+    await user_message.answer(guide)
