@@ -41,13 +41,13 @@ async def process_user_answer(user_input: types.Message, state: FSMContext):
         user_id = user_input.from_user.id
         schedules = dict()
         try:
-            with  open(f"db/{user_id}", "rb") as db:
+            with open(f"db/{user_id}", "rb") as db:
                 schedules = pickle.load(db)
                 if week.first_wd in schedules.keys():
                     week = schedules[week.first_wd]
-        except: # Excepts EOF and FileNotFound errors
+        except:  # Excepts EOF and FileNotFound errors
             # Create database file
-            open(f"db/{user_id}", 'w')
+            open(f"db/{user_id}", "w")
 
         await user_input.answer(week.view())
     else:
