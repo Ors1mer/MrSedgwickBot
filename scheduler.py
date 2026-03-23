@@ -14,7 +14,7 @@ class WeekSchedule:
     def __init__(self, day):
         self.first_wd = day - timedelta(days=day.today().weekday())
         self.schedule = [
-                [self.first_wd + timedelta(days=wd), "пусто 🌀"] for wd in range(7)
+            [self.first_wd + timedelta(days=wd), "пусто 🌀"] for wd in range(7)
         ]
 
     def edit(self, text, day_num):
@@ -22,13 +22,20 @@ class WeekSchedule:
 
     def view(self):
         today = date.today()
-        wd_names = ["Воскресение", "Понедельник", "Вторник", "Среда",
-                    "Четверг", "Пятница", "Суббота"]
+        wd_names = [
+            "Воскресение",
+            "Понедельник",
+            "Вторник",
+            "Среда",
+            "Четверг",
+            "Пятница",
+            "Суббота",
+        ]
         view = []
 
         for wd in self.schedule:
-            name = wd_names[int(wd[0].strftime("%w"))] # the russian wd name
-            ft_wd = wd[0].strftime(f"<b>{name}</b> <i>(%d.%m)</i>:") # formatted
+            name = wd_names[int(wd[0].strftime("%w"))]  # the russian wd name
+            ft_wd = wd[0].strftime(f"<b>{name}</b> <i>(%d.%m)</i>:")  # formatted
 
             if (
                 wd[0].day < today.day

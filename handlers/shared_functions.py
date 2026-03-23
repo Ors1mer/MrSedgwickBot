@@ -4,6 +4,7 @@ from random import randint
 def is_integer(text):
     return text.isdigit() or (text.startswith("-") and text[1:].isdigit())
 
+
 def append_emoji(text, category):
     """
     This function makes some text more pretty with emojies
@@ -11,7 +12,11 @@ def append_emoji(text, category):
     Category - number 0 through 3, list index
     """
     # Categories in order: offline edu, online edu, day off, work
-    categories = [['🚌', '🎓', '👩🏼‍🏫'], ['✍️',  '📚', '💻'],
-                  ['🤟', '💤', '🥰'], ['🔥', '📈', '💸']]
+    categories = [
+        ["🚌", "🎓", "👩🏼‍🏫"],
+        ["✍️", "📚", "💻"],
+        ["🤟", "💤", "🥰"],
+        ["🔥", "📈", "💸"],
+    ]
 
-    return text + ' '  + categories[category][randint(0, 2)]
+    return text + " " + categories[category][randint(0, 2)]
