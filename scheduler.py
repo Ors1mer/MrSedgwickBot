@@ -14,7 +14,7 @@ class WeekSchedule:
     def __init__(self, day):
         self.first_wd = day - timedelta(days=day.today().weekday())
         self.schedule = [
-            [self.first_wd + timedelta(days=wd), "пусто"] for wd in range(7)
+                [self.first_wd + timedelta(days=wd), "пусто 🌀"] for wd in range(7)
         ]
 
     def edit(self, text, day_num):

@@ -9,7 +9,7 @@ from scheduler import WeekSchedule
 from .shared_functions import is_integer
 
 
-class Form(StatesGroup):
+class FormView(StatesGroup):
     week_number = State()
 
 
@@ -18,10 +18,10 @@ async def viewer(user_message: types.Message):
     # Ask user so he/she understands that the bot expects a number
     await user_message.answer("Какую неделю хочешь посмотреть?")
     # Change state so that process_user_answer could launch
-    await Form.week_number.set()
+    await FormView.week_number.set()
 
 
-@dp.message_handler(state=Form.week_number)
+@dp.message_handler(state=FormView.week_number)
 async def process_user_answer(user_input: types.Message, state: FSMContext):
     """
     Await for a message with an integer, then output the week
