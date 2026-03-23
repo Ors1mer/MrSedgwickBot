@@ -1,20 +1,19 @@
 from datetime import date, timedelta
 
 
+"""
+This class requires one parameter (a date object) to be created, e. g.:
+    my_week = WeekSchedule(date.today())
+
+An instance can either be viewed or edited, e. g.:
+    my_week.edit("work", 0)
+    print(my_week.view())
+"""
 class WeekSchedule:
-    """
-    This class requires one parameter (a date object) to be created, e. g.:
-        my_week = WeekSchedule(date.today())
-
-    An instance can either be viewed or edited, e. g.:
-        my_week.edit("work", 0)
-        print(my_week.view())
-    """
-
     def __init__(self, day):
         self.first_wd = day - timedelta(days=day.today().weekday())
         self.schedule = [
-            [self.first_wd + timedelta(days=wd), "пусто 🌀"] for wd in range(7)
+            [self.first_wd + timedelta(days=wd), "empty 🌀"] for wd in range(7)
         ]
 
     def edit(self, text, day_num):
@@ -23,19 +22,14 @@ class WeekSchedule:
     def view(self):
         today = date.today()
         wd_names = [
-            "Воскресение",
-            "Понедельник",
-            "Вторник",
-            "Среда",
-            "Четверг",
-            "Пятница",
-            "Суббота",
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+            "Friday", "Saturday"
         ]
         view = []
 
         for wd in self.schedule:
-            name = wd_names[int(wd[0].strftime("%w"))]  # the russian wd name
-            ft_wd = wd[0].strftime(f"<b>{name}</b> <i>(%d.%m)</i>:")  # formatted
+            name = wd_names[int(wd[0].strftime("%w"))]
+            ft_wd = wd[0].strftime(f"<b>{name}</b> <i>(%d.%m)</i>:")
 
             if (
                 wd[0].day < today.day
