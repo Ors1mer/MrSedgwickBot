@@ -7,27 +7,28 @@ class WeekSchedule:
         my_week = WeekSchedule(date.today())
 
     An instance can either be viewed or edited, e. g.:
-        my_week.edit()
+        my_week.edit("work", 0)
         print(my_week.view())
     """
 
     def __init__(self, day):
         self.first_wd = day - timedelta(days=day.today().weekday())
         self.schedule = [
-            [self.first_wd + timedelta(days=wd), "empty"] for wd in range(7)
+            [self.first_wd + timedelta(days=wd), "пусто"] for wd in range(7)
         ]
 
-    def edit(self):
-        for wd in range(7):
-            name = self.schedule[wd][0].strftime("%A")
-            self.schedule[wd][1] = input(f"What will you do on {name}? ")
+    def edit(self, text, day_num):
+        self.schedule[day_num][1] = text
 
     def view(self):
         today = date.today()
+        wd_names = ["Воскресение", "Понедельник", "Вторник", "Среда",
+                    "Четверг", "Пятница", "Суббота"]
         view = []
 
         for wd in self.schedule:
-            ft_wd = wd[0].strftime("<b>%a</b> <i>(%d.%m)</i>:")
+            name = wd_names[int(wd[0].strftime("%w"))] # the russian wd name
+            ft_wd = wd[0].strftime(f"<b>{name}</b> <i>(%d.%m)</i>:") # formatted
 
             if (
                 wd[0].day < today.day
@@ -44,6 +45,7 @@ class WeekSchedule:
 
 if __name__ == "__main__":
     week = WeekSchedule(date.today() + timedelta(days=7 * 0))
-    week.edit()
+    week.edit("do stuff", 0)
+    week.edit("chill", 4)
     print(week.first_wd)
     print(week.view())
